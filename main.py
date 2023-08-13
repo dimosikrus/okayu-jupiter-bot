@@ -109,6 +109,46 @@ async def player_scores(interaction: discord.Interaction, who: str, mode: int, s
     except KeyError:
         await interaction.response.send_message('> ## - Player Not Found')
 
+@tree.command(name="mostplayed", description=f"Player Scores", guild=discord.Object(id=SERVERID))
+async def player_most_played(interaction: discord.Interaction, who: str, mode: int):
+    try:
+        mostplayed = api.pmostplayed(who, mode, 5)
+        
+        lim = 0
+        maps = ''
+        while lim <= 4:
+            bid = mostplayed.map_list[lim]['bid']
+            status = mostplayed.map_list[lim]['status']
+            if status == '-1':
+                status = 'NotSubmitted'
+            elif status == '0' or status == 0:
+                status = 'Pending'
+            elif status == '1' or status == 1:
+                status = 'UpdateAvailable'
+            elif status == '2' or status == 2:
+                status = 'Ranked'
+            elif status == '3' or status == 3:
+                status = 'Approved'
+            elif status == '4' or status == 4:
+                status = 'Qualified'
+            elif status == '5' or status == 5:
+                status = 'Loved'
+            title = mostplayed.map_list[lim]['title']
+            artist = mostplayed.map_list[lim]['artist']
+            creator = mostplayed.map_list[lim]['creator']
+            diff = mostplayed.map_list[lim]['diff']
+            plays = mostplayed.map_list[lim]['plays']
+            maps += f"- ({status}) (by {creator})\n- - [{title} - {artist} [{diff}]](https://osu.ppy.sh/b/{bid}) - {plays} plays\n"
+            lim += 1
+
+        embed = discord.Embed(
+            title=f'Player {who} Most Played in {mostplayed.gamemode}',
+            description=f'{maps}',
+            color=int(COLOR, 0)
+        )
+        await interaction.response.send_message(embed=embed)
+    except KeyError:
+        await interaction.response.send_message('> ## - Player Not Found')
 @client.event
 async def on_ready():
     await tree.sync(guild=discord.Object(id=SERVERID))
