@@ -136,6 +136,7 @@ class api:
             artist_limit = 14
             self.map_list = {}
             while lim <= (limit-1):
+                map_id = self.json['maps'][lim]['id']
                 map_status = self.json['maps'][lim]['status']
                 map_title = self.json['maps'][lim]['title']
                 if len(map_title) > title_limit:
@@ -149,9 +150,27 @@ class api:
                     map_artist = map_artist
                 map_diff = self.json['maps'][lim]['version']
                 map_creator = self.json['maps'][lim]['creator']
+                map_plays = self.json['maps'][lim]['plays']
 
-                self.map_list[lim] = {'status':map_status, 'title':map_title, 'artist':map_artist, 'creator':map_creator, 'diff':map_diff}
+                self.map_list[lim] = {'bid': map_id, 'status':map_status, 'title':map_title, 'artist':map_artist, 'creator':map_creator, 'diff':map_diff, 'plays': map_plays}
                 lim += 1
 
 if __name__ == '__main__':
+    '''
+    print('api')
+    count = api.count()
+    print('count:', count.online, count.total)
+    print()
+    pinfo = api.pinfo(369)
+    print('pinfo:', pinfo.id, pinfo.name, pinfo.country, pinfo.tag)
+    print()
+    pstats = api.pstats(369)
+    print('pstats:', pstats.full_pp, 'pp')
+    print()
+    pscores = api.pscores(369, 0, 5, 'best')
+    print('pscores', pscores.gamemode, pscores.player_name, '\n', pscores.scores_list)
+    print()
+    '''
+    pmostplayed = api.pmostplayed(369, 0, 5)
+    print('pmostplayed', pmostplayed.gamemode, pmostplayed.map_list)
     print()
